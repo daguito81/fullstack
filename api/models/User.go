@@ -63,9 +63,6 @@ func (u *User) Validate(action string) error {
 		}
 		return nil
 	case "login":
-		if u.Nickname == "" {
-			return errors.New("Required Nickname")
-		}
 		if u.Password == "" {
 			return errors.New("Required Password")
 		}
@@ -133,10 +130,10 @@ func (u *User) UpdateUser(db *gorm.DB, uid uint32) (*User, error) {
 	}
 	db = db.Debug().Model(&User{}).Where("id = ?", uid).UpdateColumn(
 		map[string]interface{}{
-			"password":  u.Password,
-			"nickname":  u.Nickname,
-			"email":     u.Email,
-			"update_at": time.Now(),
+			"password":   u.Password,
+			"nickname":   u.Nickname,
+			"email":      u.Email,
+			"updated_at": time.Now(),
 		},
 	)
 	if db.Error != nil {
