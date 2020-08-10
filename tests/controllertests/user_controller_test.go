@@ -10,6 +10,8 @@ import (
 	"testing"
 
 	"gopkg.in/go-playground/assert.v1"
+
+	"github.com/daguito81/fullstack/api/models"
 )
 
 func TestCreateUser(t *testing.T) {
@@ -84,5 +86,33 @@ func TestCreateUser(t *testing.T) {
 		}
 
 	}
+
+}
+
+func TestGetUsers(t *testing.T) {
+	err := refreshUserTable()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	err = seedUsers()
+	if err != nil {
+		log.Fatal(err)
+	}
+	req, err := http.NewRequest("GET", "/users", nil)
+	if err != nil {
+		t.Errorf("this is the error: %v\n", err)
+	}
+	rr := httptest.NewRecorder()
+	handler := http.HandlerFunc(server.GetUsers)
+	handler.ServeHTTP(rr, req)
+
+	var users []models.User
+	err = json.Unmarshal([]byte(rr.Body.String()), &users)
+	if err != nil {
+		log.Fatalf("Cannot convert to JSON: %v\n", err)
+	}
+	assert.Equal(t, rr.Code, http.StatusOK)
+	assert.Equal(t, len(users), 2)
 
 }
