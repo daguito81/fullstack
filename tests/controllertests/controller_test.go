@@ -57,14 +57,14 @@ func refreshUserTable() error {
 	if err != nil {
 		return err
 	}
-	log.Printf("Succesfully refreshed table!")
+	log.Printf("Successfully refreshed table")
 	return nil
 }
 
 func seedOneUser() (models.User, error) {
 	err := refreshUserTable()
 	if err != nil {
-		log.Fatalf("Error seeding 1 user: %v\n", err)
+		log.Fatal(err)
 	}
 
 	user := models.User{
@@ -75,12 +75,14 @@ func seedOneUser() (models.User, error) {
 
 	err = server.DB.Model(&models.User{}).Create(&user).Error
 	if err != nil {
-		log.Fatalf("cannot seed users table: %v", err)
+		return models.User{}, err
 	}
 	return user, nil
 }
 
-func seedUsers() error {
+func seedUsers() ([]models.User, error) {
+	var err error
+
 	users := []models.User{
 		{
 			Nickname: "Dago Romer",
@@ -93,14 +95,13 @@ func seedUsers() error {
 			Password: "crispassword",
 		},
 	}
-
 	for i := range users {
-		err := server.DB.Model(&models.User{}).Create(&users[i]).Error
+		err = server.DB.Model(&models.User{}).Create(&users[i]).Error
 		if err != nil {
-			return err
+			return []models.User{}, err
 		}
 	}
-	return nil
+	return users, nil
 }
 
 func refreshUserAndPostTable() error {
@@ -143,33 +144,37 @@ func seedOneUserAndOnePost() (models.Post, error) {
 }
 
 func seedUsersAndPosts() ([]models.User, []models.Post, error) {
+
 	var err error
+
+	if err != nil {
+		return []models.User{}, []models.Post{}, err
+	}
 	var users = []models.User{
-		{
-			Nickname: "Dago Romer",
-			Email:    "dagovago@gmail.com",
-			Password: "passworddago",
+		models.User{
+			Nickname: "Steven victor",
+			Email:    "steven@gmail.com",
+			Password: "password",
 		},
-		{
+		models.User{
 			Nickname: "Magu Frank",
 			Email:    "magu@gmail.com",
-			Password: "passwordmagu",
+			Password: "password",
 		},
 	}
 	var posts = []models.Post{
-		{
+		models.Post{
 			Title:   "Title 1",
-			Content: "Hello World 1",
+			Content: "Hello world 1",
 		},
-		{
+		models.Post{
 			Title:   "Title 2",
-			Content: "Hello World 2",
+			Content: "Hello world 2",
 		},
 	}
 
-	for i := range users {
+	for i, _ := range users {
 		err = server.DB.Model(&models.User{}).Create(&users[i]).Error
-
 		if err != nil {
 			log.Fatalf("cannot seed users table: %v", err)
 		}
@@ -177,7 +182,7 @@ func seedUsersAndPosts() ([]models.User, []models.Post, error) {
 
 		err = server.DB.Model(&models.Post{}).Create(&posts[i]).Error
 		if err != nil {
-			log.Fatalf("cannot seet posts table: %v", err)
+			log.Fatalf("cannot seed posts table: %v", err)
 		}
 	}
 	return users, posts, nil
