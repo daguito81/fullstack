@@ -13,7 +13,6 @@ import (
 	"github.com/gorilla/mux"
 	"gopkg.in/go-playground/assert.v1"
 
-	"github.com/daguito81/fullstack/api/middlewares"
 	"github.com/daguito81/fullstack/api/models"
 )
 
@@ -401,7 +400,7 @@ func TestDeleteUser(t *testing.T) {
 		}
 		req = mux.SetURLVars(req, map[string]string{"id": v.id})
 		rr := httptest.NewRecorder()
-		handler := middlewares.SetMiddlewareAuthentication(server.DeleteUser)
+		handler := http.HandlerFunc(server.DeleteUser)
 
 		req.Header.Set("Authorization", v.tokenGiven)
 
