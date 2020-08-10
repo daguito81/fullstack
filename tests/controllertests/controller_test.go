@@ -87,12 +87,12 @@ func seedUsers() ([]models.User, error) {
 		{
 			Nickname: "Dago Romer",
 			Email:    "dago@gmail.com",
-			Password: "dagopassword",
+			Password: "password",
 		},
 		{
 			Nickname: "Cristy Romer",
 			Email:    "cris@gmail.com",
-			Password: "crispassword",
+			Password: "password",
 		},
 	}
 	for i := range users {
